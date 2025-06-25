@@ -41,6 +41,20 @@ impl Ativo {
         (2.0*self.retorno_esperado*delta_time).exp()*
         ((self.volatilidade.powi(2)*delta_time).exp()-1.0)).sqrt()
     }
+
+    /// 15.2 distribuição da taxa de retorno (pag 346)
+    /// t: tempo transcorrido
+    /// x: taxa de retorno com capitalização contínua por ano 
+    ///    realizada entre 0 e t. Segue distribuição normal
+    /// 
+    fn retorno_medio_esperado(self, delta_time: f64) -> (f64, f64) {
+        let mean = self.retorno_esperado - self.volatilidade.powi(2)/2.0;
+        let stddev = (self.volatilidade.powi(2)/delta_time).sqrt();
+        let lower = mean - 1.96 * stddev;
+        let upper = mean + 1.96 * stddev;
+        (lower, upper)
+    }
+
     
 }
 
@@ -53,5 +67,9 @@ fn main() {
     let ex152 = Ativo::new(20.0, 0.2, 0.4);
     print!("\n{:.2?}", ex152.valor_esperado(1.0));
     print!("\n{:.2?}", ex152.desvio_padrao_esperado(1.0));
+
+    // exemplo 15.3 página 346-347. Preço inicial não fornecido pelo exemplo.
+    let ex153 = Ativo::new(20.0, 0.17, 0.20);
+    print!("\nIntervalo para o retorno médio esperado{:.4?}", ex153.retorno_medio_esperado(3.0));
 
 }
